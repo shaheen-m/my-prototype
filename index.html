@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한스푼 - 매일 한 스푼씩, 똑똑해지는 습관</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background: linear-gradient(135deg, #FFF9F0 0%, #FFE8D6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #root {
+            max-width: 420px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            min-height: 90vh;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #FF9B85 0%, #FFB199 100%);
+            padding: 24px 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 24px 20px;
+            overflow-y: auto;
+        }
+
+        /* Greeting Card */
+        .greeting-card {
+            background: linear-gradient(135deg, #FFE8D6 0%, #FFF4E8 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(255, 155, 133, 0.1);
+        }
+
+        .greeting-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .streak-info {
+            font-size: 15px;
+            color: #666;
+        }
+
+        /* Character */
+        .character-section {
+            text-align: center;
+            margin: 32px 0;
+        }
+
+        .character {
+            font-size: 80px;
+            margin-bottom: 12px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .character-speech {
+            background: white;
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: relative;
+            margin-top: 8px;
+        }
+
+        .character-speech::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid white;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            background: linear-gradient(135deg, #FF9B85 0%, #FF8066 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            width: 100%;
+            margin: 24px 0;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(255, 155, 133, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 155, 133, 0.4);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+        }
+
+        /* Stats Card */
+        .stats-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: #FFF9F0;
+            border-radius: 12px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF9B85;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 16px 0;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+        }
+
+        .nav-item.active {
+            color: #FF9B85;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Calendar */
+        .calendar-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+        }
+
+        .calendar-header {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .calendar-day {
+            font-size: 11px;
+            color: #999;
+            padding: 4px;
+        }
+
+        .calendar-date {
+            padding: 12px 8px;
+            border-radius: 12px;
+            font-size: 20px;
+            background: #f8f8f8;
+        }
+
+        .calendar-date.completed {
+            background: linear-gradient(135deg, #A8E6CF 0%, #90D5B5 100%);
+        }
+
+        .calendar-date.today {
+            background: linear-gradient(135deg, #FF9B85 0%, #FF8066 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Problem Screen */
+        .problem-container {
+            padding: 0;
+        }
+
+        .problem-header {
+            background: linear-gradient(135deg, #C5B4E3 0%, #B3A0D9 100%);
+            padding: 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .problem-info {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .timer {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .problem-content {
+            padding: 32px 24px;
+        }
+
+        .problem-illustration {
+            font-size: 100px;
+            text-align: center;
+            margin: 32px 0;
+        }
+
+        .problem-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 20px;
+            border: 3px solid #E0E0E0;
+            border-radius: 16px;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #FF9B85;
+            box-shadow: 0 0 0 4px rgba(255, 155, 133, 0.1);
+        }
+
+        .problem-actions {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 12px;
+            padding: 24px;
+        }
+
+        .hint-button {
+            background: #FFF4E8;
+            color: #FF9B85;
+            border: 2px solid #FF9B85;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #A8E6CF 0%, #90D5B5 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(168, 230, 207, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(168, 230, 207, 0.4);
+        }
+
+        /* Result Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            max-width: 360px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin-bottom: 16px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .result-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .result-points {
+            font-size: 20px;
+            color: #FF9B85;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .next-button {
+            background: linear-gradient(135deg, #FF9B85 0%, #FF8066 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* History Screen */
+        .history-header {
+            background: linear-gradient(135deg, #AED9E0 0%, #9BC9D0 100%);
+            padding: 24px 20px;
+            color: white;
+        }
+
+        .history-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .history-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .total-stats {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin: -20px 20px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .total-stats-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-row-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stat-row-value {
+            font-weight: 700;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .history-day {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .history-day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .history-date {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .history-badge {
+            background: linear-gradient(135deg, #FFD3E1 0%, #FFC4D6 100%);
+            color: #FF6B9D;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .history-details {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #A8E6CF 0%, #90D5B5 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* Type Analysis */
+        .type-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .type-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .type-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .type-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .type-badge.strong {
+            background: #A8E6CF;
+            color: #2D8659;
+        }
+
+        .type-badge.good {
+            background: #FFD3E1;
+            color: #D63384;
+        }
+
+        .type-badge.practice {
+            background: #FFE8D6;
+            color: #FF6B35;
+        }
+
+        .type-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .loading-spinner {
+            font-size: 48px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Level Selection */
+        .level-section {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .level-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .level-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .level-button {
+            aspect-ratio: 1;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #666;
+        }
+
+        .level-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .level-button.selected {
+            border-color: #FF9B85;
+            background: linear-gradient(135deg, #FFE8D6 0%, #FFF4E8 100%);
+            color: #FF9B85;
+        }
+
+        .level-button.completed {
+            border-color: #A8E6CF;
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8F4 100%);
+        }
+
+        .level-button.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .level-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .difficulty-selector {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .difficulty-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .difficulty-option {
+            padding: 16px 12px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .difficulty-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .difficulty-option.selected {
+            border-color: #FF9B85;
+            background: linear-gradient(135deg, #FFE8D6 0%, #FFF4E8 100%);
+        }
+
+        .difficulty-option.easy.selected {
+            border-color: #A8E6CF;
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8F4 100%);
+        }
+
+        .difficulty-option.hard.selected {
+            border-color: #C5B4E3;
+            background: linear-gradient(135deg, #F3E5F5 0%, #F8F5FA 100%);
+        }
+
+        .difficulty-emoji {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .difficulty-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .difficulty-desc {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .recommendation-card {
+            background: linear-gradient(135deg, #FFF4E8 0%, #FFE8D6 100%);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            border: 2px solid #FFD3B8;
+        }
+
+        .recommendation-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #FF9B85;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .recommendation-text {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // 샘플 데이터
+        const sampleUserData = {
+            name: "지민",
+            level: 20,
+            character: "🦊",
+            characterName: "폭시",
+            consecutiveDays: 21,
+            totalPoints: 12450,
+            thisWeekAccuracy: 85,
+            problems: {
+                total: 615,
+                correct: 502,
+                accuracy: 81.6
+            }
+        };
+
+        const sampleProblems = [
+            // 쉬움 (Level 1-4)
+            {
+                id: 1,
+                difficulty: 1,
+                level: 3,
+                type: "패턴인식",
+                question: "다음 숫자의 규칙을 찾아 빈 칸에 들어갈 숫자를 구하세요.\n\n2, 4, 6, 8, ?",
+                illustration: "🔢",
+                answer: "10",
+                hint1: "각 숫자가 2씩 증가하고 있어요",
+                hint2: "짝수로 이루어진 수열입니다"
+            },
+            {
+                id: 2,
+                difficulty: 1,
+                level: 4,
+                type: "논리추론",
+                question: "사과 3개의 가격이 3,000원입니다.\n사과 7개를 사려면 얼마가 필요할까요?",
+                illustration: "🍎🍎🍎",
+                answer: "7000",
+                hint1: "먼저 사과 1개의 가격을 구해보세요",
+                hint2: "사과 1개는 1,000원입니다"
+            },
+            // 보통 (Level 5-8)
+            {
+                id: 3,
+                difficulty: 2,
+                level: 6,
+                type: "논리추론",
+                question: "빨간 구슬 3개, 파란 구슬 5개가 있습니다.\n구슬을 일렬로 나열할 때, 같은 색깔의 구슬끼리\n붙어있지 않게 배열하는 방법은 몇 가지일까요?",
+                illustration: "🔴🔴🔴 🔵🔵🔵🔵🔵",
+                answer: "10",
+                hint1: "빨간 구슬 사이에 파란 구슬을 배치해보세요",
+                hint2: "빨간 구슬 3개는 4개의 공간을 만듭니다"
+            },
+            {
+                id: 4,
+                difficulty: 2,
+                level: 7,
+                type: "패턴인식",
+                question: "다음 수 배열에서 규칙을 찾아\n?에 들어갈 숫자를 구하세요.\n\n2, 5, 11, 23, ?, 95",
+                illustration: "🔢",
+                answer: "47",
+                hint1: "각 수를 2배 한 뒤 무엇을 더하고 있나요?",
+                hint2: "2×2+1=5, 5×2+1=11..."
+            },
+            {
+                id: 5,
+                difficulty: 2,
+                level: 8,
+                type: "공간지각",
+                question: "정육면체의 전개도가 있습니다.\n마주보는 면에 적힌 숫자의 합은 항상 7입니다.\n1과 마주보는 면의 숫자는 무엇일까요?",
+                illustration: "📦",
+                answer: "6",
+                hint1: "1 + ? = 7",
+                hint2: "7에서 1을 빼보세요"
+            },
+            // 어려움 (Level 9-12)
+            {
+                id: 6,
+                difficulty: 3,
+                level: 10,
+                type: "조합전략",
+                question: "1부터 9까지의 숫자 중에서 3개를 골라\n세 자리 수를 만들려고 합니다.\n만들 수 있는 홀수는 모두 몇 개일까요?\n(단, 같은 숫자는 중복해서 사용할 수 없습니다)",
+                illustration: "🎲",
+                answer: "320",
+                hint1: "마지막 자리는 반드시 홀수(1,3,5,7,9)여야 해요",
+                hint2: "일의 자리 5가지 × 십의 자리 8가지 × 백의 자리 8가지"
+            },
+            {
+                id: 7,
+                difficulty: 3,
+                level: 11,
+                type: "논리추론",
+                question: "A, B, C 세 사람이 경주를 했습니다.\n• A는 B보다 빠르다\n• C는 B보다 느리다\n• A와 C는 동시에 결승선을 통과했다\n\n이것이 가능할까요? (가능/불가능)",
+                illustration: "🏃‍♂️🏃‍♀️🏃",
+                answer: "불가능",
+                hint1: "A가 B보다 빠르고, B가 C보다 빠르다면?",
+                hint2: "A는 C보다 빨라야 하는데 동시에 도착했어요"
+            },
+            {
+                id: 8,
+                difficulty: 3,
+                level: 12,
+                type: "창의문제",
+                question: "8개의 동전이 있습니다.\n그 중 1개는 가짜이고 무게가 다릅니다.\n양팔 저울을 최소 몇 번 사용하면\n가짜 동전을 찾을 수 있을까요?",
+                illustration: "⚖️",
+                answer: "2",
+                hint1: "동전을 3개씩 그룹으로 나누어 보세요",
+                hint2: "첫 번째 측정으로 범위를 좁히고, 두 번째로 확정할 수 있어요"
+            }
+        ];
+
+        const historyData = [
+            {
+                date: "2025.10.23",
+                label: "오늘 🥄",
+                completed: 5,
+                correct: 4,
+                avgTime: "5분 12초",
+                hintsUsed: 1,
+                points: 85,
+                badge: "빠른 손"
+            },
+            {
+                date: "2025.10.22",
+                label: "어제",
+                completed: 5,
+                correct: 5,
+                avgTime: "4분 50초",
+                hintsUsed: 0,
+                points: 120,
+                badge: "완벽!"
+            },
+            {
+                date: "2025.10.21",
+                label: null,
+                completed: 5,
+                correct: 3,
+                avgTime: "6분 30초",
+                hintsUsed: 2,
+                points: 70,
+                badge: null
+            }
+        ];
+
+        const typeAnalysis = [
+            {
+                type: "논리추론",
+                emoji: "🧩",
+                accuracy: 92,
+                total: 134,
+                correct: 123,
+                avgTime: "4분 20초",
+                growth: 15,
+                level: "strong"
+            },
+            {
+                type: "패턴인식",
+                emoji: "🔢",
+                accuracy: 85,
+                total: 127,
+                correct: 108,
+                avgTime: "5분 10초",
+                growth: 8,
+                level: "good"
+            },
+            {
+                type: "공간지각",
+                emoji: "📐",
+                accuracy: 68,
+                total: 131,
+                correct: 89,
+                avgTime: "6분 50초",
+                growth: 3,
+                level: "practice"
+            }
+        ];
+
+        // 메인 앱 컴포넌트
+        function App() {
+            const [currentScreen, setCurrentScreen] = useState('home');
+            const [currentProblem, setCurrentProblem] = useState(0);
+            const [answer, setAnswer] = useState('');
+            const [showResult, setShowResult] = useState(false);
+            const [isCorrect, setIsCorrect] = useState(false);
+            const [hintsUsed, setHintsUsed] = useState(0);
+            const [timer, setTimer] = useState(1800); // 30분 = 1800초
+            const [selectedDifficulty, setSelectedDifficulty] = useState(2); // 1: 쉬움, 2: 보통, 3: 어려움
+            const [userLevel, setUserLevel] = useState(6); // 사용자의 현재 레벨 (1-12)
+            const [filteredProblems, setFilteredProblems] = useState([]);
+
+            useEffect(() => {
+                if (currentScreen === 'problem') {
+                    const interval = setInterval(() => {
+                        setTimer(prev => prev > 0 ? prev - 1 : 0);
+                    }, 1000);
+                    return () => clearInterval(interval);
+                }
+            }, [currentScreen]);
+
+            useEffect(() => {
+                // 선택된 난이도에 따라 문제 필터링
+                const filtered = sampleProblems.filter(p => p.difficulty === selectedDifficulty);
+                setFilteredProblems(filtered);
+            }, [selectedDifficulty]);
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            const handleSubmit = () => {
+                const problem = filteredProblems[currentProblem];
+                const correct = answer.trim() === problem.answer;
+                setIsCorrect(correct);
+                setShowResult(true);
+            };
+
+            const handleNext = () => {
+                setShowResult(false);
+                setAnswer('');
+                setHintsUsed(0);
+                if (currentProblem < filteredProblems.length - 1) {
+                    setCurrentProblem(prev => prev + 1);
+                } else {
+                    setCurrentScreen('home');
+                    setCurrentProblem(0);
+                    setTimer(1800);
+                }
+            };
+
+            const startProblem = () => {
+                setCurrentScreen('problem');
+                setCurrentProblem(0);
+                setTimer(1800);
+            };
+
+            return (
+                <div className="app-container">
+                    {currentScreen !== 'problem' && (
+                        <div className="header">
+                            <div className="logo">🥄 한스푼</div>
+                            <div className="tagline">매일 한 스푼씩, 똑똑해지는 습관</div>
+                        </div>
+                    )}
+
+                    <div className="content">
+                        {currentScreen === 'home' && (
+                            <HomeScreen 
+                                userData={sampleUserData} 
+                                onStartProblem={startProblem}
+                                selectedDifficulty={selectedDifficulty}
+                                setSelectedDifficulty={setSelectedDifficulty}
+                                userLevel={userLevel}
+                                setUserLevel={setUserLevel}
+                                problemCount={filteredProblems.length}
+                            />
+                        )}
+                        {currentScreen === 'problem' && filteredProblems.length > 0 && (
+                            <ProblemScreen 
+                                problem={filteredProblems[currentProblem]}
+                                problemNumber={currentProblem + 1}
+                                totalProblems={filteredProblems.length}
+                                timer={timer}
+                                formatTime={formatTime}
+                                answer={answer}
+                                setAnswer={setAnswer}
+                                onSubmit={handleSubmit}
+                                hintsUsed={hintsUsed}
+                                setHintsUsed={setHintsUsed}
+                            />
+                        )}
+                        {currentScreen === 'history' && (
+                            <HistoryScreen userData={sampleUserData} />
+                        )}
+                        {currentScreen === 'analysis' && (
+                            <AnalysisScreen />
+                        )}
+                    </div>
+
+                    {currentScreen !== 'problem' && (
+                        <BottomNav currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} />
+                    )}
+
+                    {showResult && (
+                        <ResultModal 
+                            isCorrect={isCorrect}
+                            points={isCorrect ? (selectedDifficulty * 10 + 10) : 0}
+                            onNext={handleNext}
+                        />
+                    )}
+                </div>
+            );
+        }
+
+        // 홈 화면
+        function HomeScreen({ userData, onStartProblem, selectedDifficulty, setSelectedDifficulty, userLevel, setUserLevel, problemCount }) {
+            const getDifficultyInfo = (diff) => {
+                const info = {
+                    1: { emoji: '🌱', name: '쉬움', desc: 'Level 1-4', color: '#A8E6CF' },
+                    2: { emoji: '🌿', name: '보통', desc: 'Level 5-8', color: '#FF9B85' },
+                    3: { emoji: '🌳', name: '어려움', desc: 'Level 9-12', color: '#C5B4E3' }
+                };
+                return info[diff];
+            };
+
+            const getRecommendation = () => {
+                if (userLevel <= 4) return 1;
+                if (userLevel <= 8) return 2;
+                return 3;
+            };
+
+            const recommendedDiff = getRecommendation();
+
+            return (
+                <>
+                    <div className="greeting-card">
+                        <div className="greeting-title">🌤️ 좋은 아침! {userData.name}님</div>
+                        <div className="streak-info">🔥 연속 {userData.consecutiveDays}일 출석 중!</div>
+                    </div>
+
+                    <div className="character-section">
+                        <div className="character">{userData.character}</div>
+                        <div style={{fontSize: '14px', fontWeight: 700, color: '#666', marginBottom: '8px'}}>
+                            레벨 {userData.level} {userData.characterName}
+                        </div>
+                        <div className="character-speech">
+                            오늘도 함께 문제를 풀어볼까? 💪
+                        </div>
+                    </div>
+
+                    {/* 레벨 선택 */}
+                    <div className="level-section">
+                        <div className="level-title">
+                            <span>🎯</span>
+                            <span>내 레벨 선택</span>
+                        </div>
+                        <div className="level-description">
+                            현재 실력에 맞는 레벨을 선택하세요
+                        </div>
+                        <div className="level-grid">
+                            {[1,2,3,4,5,6,7,8,9,10,11,12].map(level => (
+                                <button
+                                    key={level}
+                                    className={`level-button ${userLevel === level ? 'selected' : ''} ${level <= userData.level ? 'completed' : ''} ${level > userData.level + 2 ? 'locked' : ''}`}
+                                    onClick={() => level <= userData.level + 2 && setUserLevel(level)}
+                                    disabled={level > userData.level + 2}
+                                >
+                                    <div className="level-icon">
+                                        {level <= userData.level ? '✓' : level}
+                                    </div>
+                                    <div style={{fontSize: '10px'}}>Lv.{level}</div>
+                                </button>
+                            ))}
+                        </div>
+                        <div style={{fontSize: '12px', color: '#999', textAlign: 'center', marginTop: '8px'}}>
+                            선택한 레벨: Level {userLevel} {userLevel <= 4 ? '🌱' : userLevel <= 8 ? '🌿' : '🌳'}
+                        </div>
+                    </div>
+
+                    {/* 난이도 선택 */}
+                    <div className="difficulty-selector">
+                        <div className="level-title">
+                            <span>⭐</span>
+                            <span>오늘의 난이도</span>
+                        </div>
+                        <div className="difficulty-options">
+                            {[1, 2, 3].map(diff => {
+                                const info = getDifficultyInfo(diff);
+                                return (
+                                    <button
+                                        key={diff}
+                                        className={`difficulty-option ${diff === 1 ? 'easy' : diff === 3 ? 'hard' : ''} ${selectedDifficulty === diff ? 'selected' : ''}`}
+                                        onClick={() => setSelectedDifficulty(diff)}
+                                    >
+                                        <div className="difficulty-emoji">{info.emoji}</div>
+                                        <div className="difficulty-name">{info.name}</div>
+                                        <div className="difficulty-desc">{info.desc}</div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {recommendedDiff !== selectedDifficulty && (
+                            <div className="recommendation-card">
+                                <div className="recommendation-title">
+                                    💡 AI 추천
+                                </div>
+                                <div className="recommendation-text">
+                                    {userData.name}님의 현재 레벨({userLevel})에는 <strong>{getDifficultyInfo(recommendedDiff).name}</strong> 난이도를 추천해요!
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <button className="cta-button" onClick={onStartProblem}>
+                        🎯 {getDifficultyInfo(selectedDifficulty).name} 문제 {problemCount}개 시작!
+                    </button>
+
+                    <div className="stats-card">
+                        <div className="stats-grid">
+                            <div className="stat-item">
+                                <div className="stat-value">💎 {userData.totalPoints.toLocaleString()}P</div>
+                                <div className="stat-label">내 포인트</div>
+                            </div>
+                            <div className="stat-item">
+                                <div className="stat-value">📊 {userData.thisWeekAccuracy}%</div>
+                                <div className="stat-label">이번 주 정답률</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="calendar-card">
+                        <div className="calendar-header">📅 이번 주 학습 기록</div>
+                        <div className="calendar-grid">
+                            {['월', '화', '수', '목', '금', '토', '일'].map(day => (
+                                <div key={day} className="calendar-day">{day}</div>
+                            ))}
+                            <div className="calendar-date completed">🥄</div>
+                            <div className="calendar-date completed">🥄</div>
+                            <div className="calendar-date completed">🥄</div>
+                            <div className="calendar-date completed">🥄</div>
+                            <div className="calendar-date completed">🥄</div>
+                            <div className="calendar-date completed">🥄</div>
+                            <div className="calendar-date today">⭐</div>
+                        </div>
+                    </div>
+                </>
+            );
+        }
+
+        // 문제 풀이 화면
+        function ProblemScreen({ problem, problemNumber, totalProblems, timer, formatTime, answer, setAnswer, onSubmit, hintsUsed, setHintsUsed }) {
+            const [showHint, setShowHint] = useState(false);
+
+            return (
+                <div className="problem-container">
+                    <div className="problem-header">
+                        <div className="problem-info">
+                            문제 {problemNumber}/{totalProblems} {'⭐'.repeat(problem.difficulty)}
+                        </div>
+                        <div className="timer">⏱️ {formatTime(timer)}</div>
+                    </div>
+
+                    <div className="problem-content">
+                        <div style={{fontSize: '13px', color: '#999', marginBottom: '8px', textAlign: 'center'}}>
+                            {problem.type}
+                        </div>
+                        <div className="problem-illustration">{problem.illustration}</div>
+                        <div className="problem-text">{problem.question}</div>
+
+                        <input 
+                            type="text"
+                            className="answer-input"
+                            placeholder="답을 입력하세요"
+                            value={answer}
+                            onChange={(e) => setAnswer(e.target.value)}
+                        />
+
+                        {showHint && (
+                            <div style={{
+                                background: '#FFF4E8',
+                                padding: '16px',
+                                borderRadius: '12px',
+                                marginBottom: '16px',
+                                border: '2px solid #FFD3B8'
+                            }}>
+                                <div style={{fontSize: '14px', color: '#FF9B85', fontWeight: 700, marginBottom: '8px'}}>
+                                    💡 힌트
+                                </div>
+                                <div style={{fontSize: '14px', color: '#666', lineHeight: 1.6}}>
+                                    {hintsUsed === 1 ? problem.hint1 : problem.hint2}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="problem-actions">
+                        <button 
+                            className="hint-button"
+                            onClick={() => {
+                                if (hintsUsed < 2) {
+                                    setHintsUsed(prev => prev + 1);
+                                    setShowHint(true);
+                                }
+                            }}
+                            disabled={hintsUsed >= 2}
+                        >
+                            💡 힌트<br/>{2 - hintsUsed}개
+                        </button>
+                        <button className="submit-button" onClick={onSubmit}>
+                            ✓ 정답 제출하기
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // 결과 모달
+        function ResultModal({ isCorrect, points, onNext }) {
+            return (
+                <div className="modal-overlay" onClick={onNext}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="result-icon">
+                            {isCorrect ? '🎉' : '💭'}
+                        </div>
+                        <div className="result-title">
+                            {isCorrect ? '정답이야!' : '조금 아쉬워...'}
+                        </div>
+                        {isCorrect && (
+                            <div className="result-points">💎 +{points} 포인트 획득!</div>
+                        )}
+                        <div style={{fontSize: '14px', color: '#666', marginBottom: '24px'}}>
+                            {isCorrect ? '역시 대단해! 🦊' : '괜찮아! 다시 한번 생각해볼까?'}
+                        </div>
+                        <button className="next-button" onClick={onNext}>
+                            {isCorrect ? '다음 문제로 →' : '다시 풀어보기'}
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // 히스토리 화면
+        function HistoryScreen({ userData }) {
+            return (
+                <>
+                    <div className="history-header" style={{margin: '-24px -20px 0'}}>
+                        <div className="history-title">📖 나의 학습 여정</div>
+                        <div className="history-subtitle">2025년 7월 25일부터 시작</div>
+                    </div>
+
+                    <div className="total-stats">
+                        <div className="total-stats-title">🎯 총 통계</div>
+                        <div className="stats-list">
+                            <div className="stat-row">
+                                <span className="stat-row-label">총 문제 수</span>
+                                <span className="stat-row-value">{userData.problems.total}개</span>
+                            </div>
+                            <div className="stat-row">
+                                <span className="stat-row-label">정답</span>
+                                <span className="stat-row-value">{userData.problems.correct}개 ({userData.problems.accuracy}%)</span>
+                            </div>
+                            <div className="stat-row">
+                                <span className="stat-row-label">획득 포인트</span>
+                                <span className="stat-row-value">💎 {userData.totalPoints.toLocaleString()}P</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{fontSize: '16px', fontWeight: 700, margin: '24px 0 12px', color: '#333'}}>
+                        📅 날짜별 기록
+                    </div>
+
+                    {historyData.map((day, index) => (
+                        <div key={index} className="history-day">
+                            <div className="history-day-header">
+                                <div>
+                                    <div className="history-date">
+                                        {day.date} {day.label && <span style={{fontSize: '13px', color: '#999'}}>{day.label}</span>}
+                                    </div>
+                                </div>
+                                {day.badge && <div className="history-badge">{day.badge}</div>}
+                            </div>
+                            <div className="history-details">
+                                📝 {day.completed}문제 완료 ({day.correct}/{day.completed} 정답)<br/>
+                                ⏱️ 평균 {day.avgTime} | 💡 힌트 {day.hintsUsed}개<br/>
+                                💎 획득: {day.points}P
+                            </div>
+                            <div className="progress-bar">
+                                <div className="progress-fill" style={{width: `${(day.correct / day.completed) * 100}%`}}></div>
+                            </div>
+                        </div>
+                    ))}
+                </>
+            );
+        }
+
+        // 분석 화면
+        function AnalysisScreen() {
+            return (
+                <>
+                    <div style={{fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#333'}}>
+                        🧩 문제 유형별 분석
+                    </div>
+                    <div style={{fontSize: '14px', color: '#666', marginBottom: '24px'}}>
+                        나의 강점과 약점을 확인해보세요
+                    </div>
+
+                    {typeAnalysis.map((type, index) => (
+                        <div key={index} className="type-card">
+                            <div className="type-header">
+                                <div>
+                                    <span style={{fontSize: '20px', marginRight: '8px'}}>{type.emoji}</span>
+                                    <span className="type-name">{type.type}</span>
+                                </div>
+                                <div className={`type-badge ${type.level}`}>
+                                    {type.level === 'strong' ? '💪 강점!' : 
+                                     type.level === 'good' ? '😊 잘하는 편' : 
+                                     '🤔 연습 필요'}
+                                </div>
+                            </div>
+                            <div className="type-stats">
+                                <span>정답률: {type.accuracy}% ({type.correct}/{type.total})</span>
+                                <span>⏱️ {type.avgTime}</span>
+                                <span style={{color: type.growth > 5 ? '#2D8659' : '#999'}}>
+                                    {type.growth > 0 ? '⬆️' : '→'} {type.growth}%
+                                </span>
+                            </div>
+                            <div className="progress-bar">
+                                <div 
+                                    className="progress-fill" 
+                                    style={{
+                                        width: `${type.accuracy}%`,
+                                        background: type.level === 'strong' ? 'linear-gradient(135deg, #A8E6CF 0%, #90D5B5 100%)' :
+                                                   type.level === 'good' ? 'linear-gradient(135deg, #FFD3E1 0%, #FFC4D6 100%)' :
+                                                   'linear-gradient(135deg, #FFE8D6 0%, #FFD3B8 100%)'
+                                    }}
+                                ></div>
+                            </div>
+                        </div>
+                    ))}
+                </>
+            );
+        }
+
+        // 하단 네비게이션
+        function BottomNav({ currentScreen, setCurrentScreen }) {
+            return (
+                <div className="bottom-nav">
+                    <button 
+                        className={`nav-item ${currentScreen === 'home' ? 'active' : ''}`}
+                        onClick={() => setCurrentScreen('home')}
+                    >
+                        <div className="nav-icon">🏠</div>
+                        <div className="nav-label">홈</div>
+                    </button>
+                    <button 
+                        className={`nav-item ${currentScreen === 'history' ? 'active' : ''}`}
+                        onClick={() => setCurrentScreen('history')}
+                    >
+                        <div className="nav-icon">📚</div>
+                        <div className="nav-label">히스토리</div>
+                    </button>
+                    <button 
+                        className={`nav-item ${currentScreen === 'analysis' ? 'active' : ''}`}
+                        onClick={() => setCurrentScreen('analysis')}
+                    >
+                        <div className="nav-icon">📊</div>
+                        <div className="nav-label">분석</div>
+                    </button>
+                    <button className="nav-item">
+                        <div className="nav-icon">🎁</div>
+                        <div className="nav-label">상점</div>
+                    </button>
+                    <button className="nav-item">
+                        <div className="nav-icon">👤</div>
+                        <div className="nav-label">내정보</div>
+                    </button>
+                </div>
+            );
+        }
+
+        // 앱 렌더링
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
